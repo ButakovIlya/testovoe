@@ -32,5 +32,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY . .
 
+COPY ./alembic.ini /app/alembic.ini
+
 RUN mkdir -p /src/storage/media \
     && mkdir -p /src/logs
