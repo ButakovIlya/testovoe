@@ -32,7 +32,7 @@
 
 ### 1. Клонирование проекта
 ```bash
-git clone https://github.com/ButakovIlya/fastapi-blog-backend.git
+git clone https://github.com/ButakovIlya/testovoe.git
 cd fastapi-blog-backend
 ```
 
