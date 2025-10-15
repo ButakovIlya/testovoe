@@ -39,3 +39,8 @@ class WrongPasswordError(DomainException):
 class PostTitleAlreadyExists(DomainException):
     code = 10410
     message = "Post with that title already exists."
+
+
+class InvalidEmailError(DomainException):
+    code = 10412
+    message = "Enter valid email."

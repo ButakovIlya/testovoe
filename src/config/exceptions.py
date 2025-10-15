@@ -9,6 +9,7 @@ from api.permissions.exceptions import UserIsNotAdminError, UserIsNotAuthenticat
 from application.exceptions import (
     CategoryAlreadyExists,
     CategoryDoesNotExist,
+    InvalidEmailError,
     PostTitleAlreadyExists,
     UserDoesNotExistError,
     UserWithEmailAlreadyExistsError,
@@ -89,5 +90,6 @@ handlers = {
     CategoryDoesNotExist: create_exception_handler(status_code=400),
     CategoryAlreadyExists: create_exception_handler(status_code=400),
     PostTitleAlreadyExists: create_exception_handler(status_code=400),
+    InvalidEmailError: create_exception_handler(status_code=400),
     RequestValidationError: validation_exception_handler,
 }

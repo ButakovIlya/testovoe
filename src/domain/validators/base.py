@@ -2,6 +2,8 @@ import re
 
 from pydantic import BaseModel, Field, field_validator
 
+from application.exceptions import InvalidEmailError
+
 
 class UserRegisterDTO(BaseModel):
     first_name: str = Field(...)
@@ -16,7 +18,7 @@ class UserRegisterDTO(BaseModel):
 
         pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
         if not re.match(pattern, email):
-            raise ValueError("Некорректный адрес электронной почты")
+            raise InvalidEmailError()
 
         return email
 
