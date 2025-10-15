@@ -33,7 +33,6 @@
 ### 1. Клонирование проекта
 ```bash
 git clone https://github.com/ButakovIlya/testovoe.git
-cd fastapi-blog-backend
 ```
 
 ### 2. Запуск проекта через Docker
