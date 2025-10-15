@@ -1,0 +1,80 @@
+name: Deploy Docker Container and Front-end to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy project files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASS }}
+          port: 22
+          source: "."
+          target: "/home/test-app"
+
+      - name: Run docker-compose on server
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASS }}
+          port: 22
+          script: |
+            cd /home/test-app
+
+            echo "Создаём .env"
+            cat <<EOF > .env
+            PYTHONPATH=${{ secrets.PYTHONPATH }}
+            PYTHONUNBUFFERED=${{ secrets.PYTHONUNBUFFERED }}
+
+            APP__NAME=${{ secrets.APP__NAME }}
+            APP__BASE_URL=${{ secrets.APP__BASE_URL }}
+            APP__DEBUG=${{ secrets.APP__DEBUG }}
+
+            UPTRACE__ENABLED=False
+            UPTRACE__DSN=
+
+
+            DB__NAME=${{ secrets.DB__NAME }}
+            DB__USER=${{ secrets.DB__USER }}
+            DB__PASSWORD=${{ secrets.DB__PASSWORD }}
+            DB__HOST=${{ secrets.DB__HOST }}
+            DB__PORT=${{ secrets.DB__PORT }}
+            DB__POOL_SIZE=2
+            DB__MAX_OVERFLOW=4
+
+            UVICORN_HOST=0.0.0.0
+            UVICORN_PORT=8000
+            UVICORN_WORKERS=4
+            UVICORN_RELOAD=false
+            UVICORN_TIMEOUT_KEEP_ALIVE=5
+
+            JWT__SECRET_KEY=${{ secrets.JWT__SECRET_KEY }}
+            JWT__ALGORITHM=${{ secrets.JWT__ALGORITHM }}
+
+            EOF
+
+            echo "Создаём .env.db"
+            cat <<EOF > .env.db
+            POSTGRES_DB=${{ secrets.DB_NAME }}
+            POSTGRES_USER=${{ secrets.DB_USER }}
+            POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
+            EOF
+
+            echo "Останавливаем старые контейнеры..."
+            docker compose down
+
+            echo "Собираем и запускаем новые контейнеры..."
+            docker compose up -d --build
+
+            echo "done"

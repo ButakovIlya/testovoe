@@ -1,0 +1,173 @@
+[tool.poetry]
+name = "fastapi-blog-backend"
+version = "0.1.0"
+description = "Backend-приложение для блога с CRUD, JWT и ролями"
+authors = ["Ilya Butakov <gabellaoff@yandex.ru>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+fastapi = "^0.119.0"
+uvicorn = { extras = ["standard"], version = "^0.37.0" }
+sqlalchemy = "^2.0.44"
+asyncpg = "^0.30.0"
+alembic = "^1.17.0"
+pydantic-settings = "^2.11.0"
+python-dotenv = "^1.1.1"
+email-validator = "^2.3.0"
+bcrypt = "^5.0.0"
+python-jose = { extras = ["cryptography"], version = "^3.5.0" }
+passlib = {extras = ["argon2"], version = "^1.7.4"}
+bleach = "^6.2.0"
+dependency-injector = "^4.48.2"
+pyjwt = "^2.10.1"
+uptrace = "^1.37.0"
+opentelemetry-api = "^1.37.0"
+opentelemetry-sdk = "^1.37.0"
+opentelemetry-instrumentation-fastapi = "^0.58b0"
+python-multipart = "^0.0.20"
+factory-boy = "^3.3.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.2"
+pytest-asyncio = "^1.2.0"
+httpx = "^0.28.1"
+black = "^25.9.0"
+isort = "^7.0.0"
+ruff = "^0.14.0"
+mypy = "^1.15.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    "*/__init__.py",
+    "*/schema/*",
+    "*/tests/*",
+    "*/router.py",
+    "*/schemas.py",
+    "migrations/*",
+    "src/translations/*",
+    "*/replen_optimizer/tasks.py",
+    "*/general/management/*",
+    "*/exceptions/*",
+    "*/calculators/*",
+    ".gitignore",
+    "*.env*",
+    "*/.gitlab*",
+    "*/Dockerfile",
+    "*/alembic*",
+    "*/docker-*",
+    "*/README*",
+    "*/CHANGELOG.md",
+    "*/alembic/*",
+    "*/migrations/"
+]
+
+line-length = 90
+indent-width = 4
+target-version = "py311"
+
+[tool.ruff.lint]
+# Rules for ruff here --> https://docs.astral.sh/ruff/rules/
+select = ["E", "F", "W", "D"]  # Default + iSort + Pydocstyle
+
+# Skip unused variable rules
+# Excluded as unsupported "E121", "E123", "E126", "E127", "W503", "W504"
+ignore = [
+    "D100", "D101", "D102", "D103", "D104", "D105",
+    "D106", "D107", "D200", "D204", "D205", "D400",
+    "E731", "E722", "F821", "E402", "F405", "F403",
+    "D208", "E203",
+]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F405"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"  # Accepts: "google", "numpy", or "pep257".
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 108 # Настройка длины из flake8 setup.cfg
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+
+default_section = "THIRDPARTY"
+known_first_party = ["config", "shared", "tests", "application", "domain", "infrastructure", "api"]
+src_paths = ["services/*/src", "packages/*/tests"]
+
+sections = [
+    "FUTURE",
+    "STDLIB",
+    "THIRDPARTY",
+    "FIRSTPARTY",
+    "LOCALFOLDER",
+]
+
+skip_glob = ["*/migrations/*", "*/alembic/*"]
+
+[tool.mypy]
+python_version = "3.11"
+disallow_untyped_defs = true
+ignore_missing_imports = true
+show_error_codes = true
+no_implicit_optional = true
+explicit_package_bases=true
+mypy_path = ["./src"]
+exclude = [
+  ".venv",
+  "venv",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-vv -ra"
+log_cli = false
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore:Unmanaged access of declarative attribute.*:sqlalchemy.exc.SAWarning",
+]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "**/__init__.py",
+    "src/main.py",
+    "src/worker.py",
+    "**/base.py",
+    "**/interfaces/*.py",
+    "**/fake/*.py",
+    "**/fake.py",
+    "src/config/*",
+    "**/db.py",
+    "**/schemas.py",
+    "**/models/**",
+    "**/exceptions.py",
+    "**/dto.py",
+    "**/enums.py",
+    "**/factories/**",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "__init__",
+    "from .* import .*",
+    "router = .*",
+]

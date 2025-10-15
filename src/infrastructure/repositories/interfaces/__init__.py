@@ -1,0 +1,2 @@
+from infrastructure.repositories.interfaces.post import PostRepository
+from infrastructure.repositories.interfaces.user import UserRepository
